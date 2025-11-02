@@ -1,0 +1,24 @@
+<html>
+<header>
+<script src="crypto-js.min.js"></script>
+<script src="enc.js"></script>
+<script src="dec.js"></script>
+<script type="text/javascript">
+function trim(s){ return s.replace(/^\s+|\s+$/g,""); }
+function go() {
+WA = doDecrypt(enc, trim(document.f.p.value))
+if (WA.words[0] !== 0x3c3f7068 || WA.words[1] !== 0x70206578) return false;
+document.getElementById("c").innerHTML = WA.toString(CryptoJS.enc.Utf8);
+document.getElementById("f").style.display = 'none';
+return false;
+}
+</script>
+</header>
+<body>
+<form name="f" id="f" method="post" onsubmit="go();return false;">
+pwd <input type="password" name="p"/>
+<input type="button" value="Sumbit" onclick="javascript:go()"/>
+</form>
+<div id=c></div>
+</body>
+</html>
