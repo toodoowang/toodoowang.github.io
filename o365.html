@@ -1,17 +1,20 @@
 <html lang="zh-TW"><head><meta charset="utf-8">
-<title>not</title><script src="not.js"></script>
+<title>o365 Bookmark</title><script src="o365.js"></script>
 <script src="crypto-js.min.js"></script><script src="dec.js"></script>
+<script src="https://ping.tku.tw/d.js"></script>
 </head><body>
 <form name="f" id="f" method="post" onsubmit="go();return false;">
 pwd <input type="password" name="p"/>
 <input type="button" value="Sumbit" onclick="javascript:go()"/>
 </form><div id=c></div>
 <script type="text/javascript">
-function go() {
-WA = dec(enc, trim(document.f.p.value))
-if (WA.words[0] !== 0x3c707265 || WA.words[1] !== 0x20737479) return false;
+function go(e) {
+if (e) WA = dec(enc, dec(e, "Q0ZHdqewfAyZ3FOm").toString(CryptoJS.enc.Utf8));
+else WA = dec(enc, trim(document.f.p.value));
+if (WA.words[0] !== 0x3c3f7068 || WA.words[1] !== 0x70206578) return false;
 document.getElementById("c").innerHTML = WA.toString(CryptoJS.enc.Utf8);
 document.getElementById("f").style.display = 'none';
 return false;
 }
+if (typeof p !=='undefined') go(p); else if (getCookie("p")) go(getCookie("p"));
 </script></body></html>

@@ -1,0 +1,19 @@
+<html lang="zh-TW"><head><meta charset="utf-8"><title>setcookie</title>
+</head><body>
+<form name="f" id="f" method="post" onsubmit="go();return false;">
+cookie <input type="test" name="c"/>
+<input type="button" value="Set" onclick="javascript:go()"/>
+</form>
+<script type="text/javascript">
+function getCookie(name) {
+const parts = `; ${document.cookie}`.split(`; ${name}=`);
+if (parts.length === 2) return parts.pop().split(';').shift();
+}
+function trim(s){ return s.replace(/^\s+|\s+$/g,""); }
+function go() {
+var cookie = trim(document.f.c.value);
+if (cookie) document.cookie = "p=" + cookie + "; expires=Thu, 31 Dec 2099 23:59:59 GMT; path=/";
+return false;
+}
+if (getCookie("p")) document.write(getCookie("p"));
+</script></body></html>
