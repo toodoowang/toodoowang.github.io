@@ -11,7 +11,7 @@ pwd <input type="password" name="p"/>
 function go(e) {
 if (e) WA = dec(enc, dec(e, "Q0ZHdqewfAyZ3FOm").toString(CryptoJS.enc.Utf8));
 else WA = dec(enc, trim(document.f.p.value));
-if (WA.words[0] !== 0x3c3f7068 || WA.words[1] !== 0x70206578) return false;
+if (WA.words[0] !== 0x3c68746d || WA.words[1] !== 0x6c206c61) return false;
 document.getElementById("c").innerHTML = WA.toString(CryptoJS.enc.Utf8);
 document.getElementById("f").style.display = "none";
 if (typeof e === "undefined") document.querySelectorAll("a").forEach(link => { link.setAttribute("target", "_blank"); link.setAttribute("rel", "noopener noreferrer"); });
