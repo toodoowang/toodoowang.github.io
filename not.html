@@ -1,17 +1,30 @@
 <html lang="zh-TW"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>not</title><script src="https://b.toodoo.net/not.js"></script>
-<script src="crypto-js.min.js"></script><script src="dec.js"></script>
 </head><body>
-<form name="f" id="f" method="post" onsubmit="go();return false;">
-pwd <input type="password" name="p"/>
-<input type="button" value="Sumbit" onclick="javascript:go()"/>
-</form><div id=c></div>
-<script type="text/javascript">
-function go() {
-WA = dec(enc, trim(document.f.p.value))
-if (WA.words[0] !== 0x3c707265 || WA.words[1] !== 0x20737479) return false;
-document.getElementById("c").innerHTML = WA.toString(CryptoJS.enc.Utf8);
-document.getElementById("f").style.display = 'none';
-return false;
+<div id="f">pwd <input type="password" id="pwd" />
+<button id="s">Submit</button></div><div id=c></div>
+<script>
+async function dec(enc, password, iterations = 10000) {
+    const data = Uint8Array.from(atob(enc), c => c.charCodeAt(0));
+    if (new TextDecoder().decode(data.subarray(0, 6)) !== "Salted") throw new Error("Missing header.");
+    const salt = data.subarray(8, 16), ctext = data.subarray(16);
+    const keym = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+    const div = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations, hash: "SHA-256" }, keym, 384));
+    const key = await crypto.subtle.importKey("raw", div.subarray(0, 32), "AES-CBC", false, ["decrypt"]);
+    const decrypt = await crypto.subtle.decrypt({ name: "AES-CBC", iv: div.subarray(32, 48) }, key, ctext);
+    return new TextDecoder().decode(decrypt);
 }
+
+async function go() {
+try {
+    document.getElementById("c").innerHTML = await dec(enc, document.getElementById('pwd').value);
+    document.getElementById("f").style.display = "none";
+} catch (err) { //console.error("decode error");
+}
+}
+
+document.getElementById('s').addEventListener('click', go);
+document.getElementById('pwd').addEventListener('keydown', (event) => { if (event.key === 'Enter') go(); });
+
 </script></body></html>
