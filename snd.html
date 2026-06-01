@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>send-msg-to-me</title>
+<script src="https://b.toodoo.net/s.js"></script>
+<script src="crypto-js.min.js"></script><script src="dec.js"></script>
+</head>
+<body><h3>send-msg-to-me (Send file: <a href="https://pairdrop.net/" target="_blank" rel="noreferrer noopener">PairDrop</a>)</h3>
+<form name="f" id="f" method="post" onsubmit="return false;">
+<textarea id="msg" placeholder="msg..." cols=50 rows=5></textarea><br>
+<div id="pwd" style="display:none;">pwd <input type="password" name="p"/></div>
+<button onclick="sendMessage()">send</button>
+</form>
+<div id="status"></div>
+<script>
+if (typeof w === "undefined") {
+    document.getElementById("pwd").style.display = "block";
+}
+
+async function sendMessage() {
+    const inputField = document.getElementById('msg');
+    const stat = document.getElementById('status');
+    const messageText = "<pre>" + inputField.value.trim() + "</pre>";
+
+    if (!messageText) {
+        stat.innerText = "請輸入訊息內容！";
+        stat.style.color = "red";
+        return;
+    }
+
+    if (typeof w === "undefined") {
+        ww = "U2FsdGVkX19G/DjGPLvH8Jm9OZhODoxB9faG8amIzEXy/yotCmgahkM+jWX0PrtsI6PtW6md+Cta8TEP2v/cyjufHnU9epuNdiSm3+tyX7pVMDIESPA7B4jkd/elwPBWUIx1vx4ErEC3EgIo1KdLhhs+1hXfptXre9ckTx3tCKIZ0b5tQGCDJ24eLpfoJiz4HvOIubBVUc4s04VzS9F5TG6MUrHyHopSOlAniHFfK4JFSllNJSjCXb8vSNV4QQkC5PU6ZTp/j0kphs5hwRcBbPgQ7zW5qDSFi4ViOQ9e93srjeh1OLB5ZXo85t/yefLBChPE1C1m/UH5FGvwq+bZxvpVf+rGLFy+OUK9u9nyBF2YWGNoXmV8M8iuzd7jTaNCMyKo8f3GlmvzqIJ1KqQUiIRydjDs27ybQxZ/Qukia9c=";
+        wa = dec(ww, document.f.p.value);
+        if (wa.words[0] !== 0x68747470) {
+            stat.innerText = "密碼錯誤!";
+            stat.style.color = "red";
+            return;
+        }
+        wh = wa.toString(CryptoJS.enc.Utf8);
+    } else {
+        wh = w;
+    }
+
+    stat.innerText = "傳送中...";
+    stat.style.color = "orange";
+
+    const payload = { "text": messageText };
+
+    try {
+        const response = await fetch(wh, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            stat.innerText = "傳送成功！";
+            stat.style.color = "green";
+            inputField.value = "";
+        } else {
+            throw new Error(`伺服器回應錯誤: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        stat.innerText = "傳送失敗, 請按F12查看Console!";
+        stat.style.color = "red";
+    }
+}
+</script>
+</body>
+</html>
